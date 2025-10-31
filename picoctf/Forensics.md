@@ -156,6 +156,7 @@ Created fixed.bmp
 ### Step 5: View the fixed image
 After fixing the BMP header, the image displayed properly and revealed the flag.
 
+
 ## Flag:
 ```
 picoCTF{qu1t3_a_v13w_2020}
