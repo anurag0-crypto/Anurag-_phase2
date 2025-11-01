@@ -8,10 +8,10 @@ This challenge involves reverse engineering a Java program that scrambles a pass
 
 First, I analyzed the `checkPassword` method which takes a 32-character password and scrambles it through four different loops:
 
-1. **Loop 1**: Copies first 8 characters as it is
-2. **Loop 2**: Copies characters 8-15 in reverse order from positions 15-8  
-3. **Loop 3**: Copies every other character starting from position 16 using a formula
-4. **Loop 4**: Copies the remaining odd-indexed characters as it is
+Loop 1 Copies first 8 characters as it is
+Loop 2 Copies characters 8-15 in reverse order from positions 15-8  
+Loop 3 Copies every other character starting from position 16 using a formula
+Loop 4 Copies the remaining odd-indexed characters as it is
 
 The scrambled result must equal: `"jU5t_a_sna_3lpm18g947_u_4_m9r54f"`
 
@@ -56,22 +56,20 @@ picoCTF{jU5t_a_s1mpl3_an4gr4m_4_u_79958f}
 
 ## Concepts learnt:
 
-- **Reverse Engineering**: Working backwards from a known output to determine the original input
-- **String Manipulation**: Understanding how characters are rearranged in memory
-- **Index Mapping**: Tracking how positions change between original and scrambled data
-- **Java charAt() method**: Extracting specific characters from strings by position
+Reverse Engineering: Working backwards from a known output to determine the original input
+String Manipulation: Understanding how characters are rearranged in memory
+Index Mapping: Tracking how positions change between original and scrambled data
+Java charAt() method: Extracting specific characters from strings by position
 
 ## Notes:
 
-- The key insight was recognizing that each loop fills specific positions in the buffer from specific positions in the password
-- I initially tried to solve this manually but found it much easier to write a script
-- The scrambling process essentially creates an anagram of the original password with a specific pattern
-- The flag format requires wrapping the password with `picoCTF{}`
+The key insight was recognizing that each loop fills specific positions in the buffer from specific positions in the password.I initially tried to solve this manually 
+but found it much easier to write a script.The scrambling process essentially creates an anagram of the original password with a specific pattern
 
 ## Resources:
 
-- [Java String charAt() method documentation](https://docs.oracle.com/javase/8/docs/api/java/lang/String.html#charAt-int-)
-- [Python string manipulation guide](https://docs.python.org/3/tutorial/introduction.html#strings)
+https://docs.oracle.com/javase/8/docs/api/java/lang/String.html#charAt-int-
+https://docs.python.org/3/tutorial/introduction.html#strings
 
 
 # ARMssembly 1
@@ -82,16 +80,15 @@ picoCTF{jU5t_a_s1mpl3_an4gr4m_4_u_79958f}
 
 Let's analyze the ARM assembly code step by step. The key function is `func` which processes our input.
 
-**Understanding the `func` function:**
-
-1. **Variable Setup:**
+Understanding the `func` function
+Variable Setup
    ```assembly
    mov	w0, 83        ; Store 83 in [sp, 16]
    str	wzr, [sp, 20] ; Store 0 in [sp, 20]  
    mov	w0, 3         ; Store 3 in [sp, 24]
    ```
 
-2. **Operations:**
+   Operations
    ```assembly
    ldr	w0, [sp, 20]  ; Load 0 into w0
    ldr	w1, [sp, 16]  ; Load 83 into w1
@@ -113,13 +110,13 @@ Let's analyze the ARM assembly code step by step. The key function is `func` whi
    str	w0, [sp, 28]  ; Store result
    ```
 
-3. **Win Condition in main:**
+Win Condition in main:
    ```assembly
    cmp	w0, 0         ; Compare result with 0
    bne	.L4           ; If not equal, jump to lose
    ```
 
-**Mathematical Equation:**
+Mathematical Equation:
 The program prints "win" when:
 ```
 27 - input = 0
@@ -129,7 +126,7 @@ Therefore:
 input = 27
 ```
 
-**Convert to Hexadecimal:**
+Converting the decimal in hexadecimal, we get
 27 in decimal = 0x1B in hexadecimal
 As a 32-bit value with no 0x prefix: `0000001b`
 
@@ -141,11 +138,11 @@ picoCTF{0000001b}
 
 ## Concepts learnt:
 
-- **ARM Assembly Analysis**: Understanding ARMv8 instruction set
-- **Bit Shifting**: `lsl` instruction for left shifts
-- **Division Operations**: `sdiv` for signed division
-- **Stack Operations**: How local variables are stored on stack
-- **Conditional Branching**: Using `cmp` and `bne` for flow control
+ARM Assembly Analysis: Understanding ARMv8 instruction set
+Bit Shifting:`lsl` instruction for left shifts
+Division Operations:`sdiv` for signed division
+Stack Operations: How local variables are stored on stack
+Conditional Branching: Using `cmp` and `bne` for flow control
 
 ## Notes:
 
@@ -157,9 +154,9 @@ picoCTF{0000001b}
 
 ## Resources:
 
-- [ARM Instruction Set Reference](http://infocenter.arm.com/help/index.jsp)
-- [ARM Assembly Basics](https://azeria-labs.com/writing-arm-assembly-part-1/)
-- [Hexadecimal Converter](https://www.rapidtables.com/convert/number/decimal-to-hex.html)
+http://infocenter.arm.com/help/index.jsp
+https://azeria-labs.com/writing-arm-assembly-part-1/
+https://www.rapidtables.com/convert/number/decimal-to-hex.html
 
 
 # GDB baby step 1
@@ -171,28 +168,27 @@ picoCTF{0000001b}
 This challenge requires using GDB (GNU Debugger) to examine a binary file and find what value is stored in the `eax` register when the main function ends.
 
 **Step-by-step solution:**
-
-1. **First, I navigated to the directory containing the binary file:**
+First, I navigated to the directory containing the binary file:
    ```bash
    cd /mnt/d/picocTF/
    ```
 
-2. **Made the file executable:**
+Made the file executable:
    ```bash
    chmod +x debugger0_a
    ```
 
-3. **Opened the file in GDB:**
+Opened the file in GDB:
    ```bash
    gdb ./debugger0_a
    ```
 
-4. **Inside GDB, I disassembled the main function to see the assembly code:**
+Inside GDB, I disassembled the main function to see the assembly code:
    ```bash
    (gdb) disassemble main
    ```
 
-5. **The output showed the assembly code:**
+The output showed the assembly code:
    ```
    Dump of assembler code for function main:
       0x0000000000001129 <+0>:     endbr64
@@ -205,16 +201,16 @@ This challenge requires using GDB (GNU Debugger) to examine a binary file and fi
       0x000000000000113e <+21>:    ret
    ```
 
-6. **I identified the key instruction:**
+I identified the key instruction:
    - `mov $0x86342,%eax` - This moves the hexadecimal value `0x86342` into the `eax` register
 
-7. **Exited GDB and converted the hex value to decimal:**
+Exited GDB and converted the hex value to decimal:
    ```bash
    (gdb) quit
    echo $((0x86342))
    ```
 
-8. **The conversion gave me: `549698`**
+The conversion gave me: `549698`
 
 The value in the `eax` register at the end of main is `549698` in decimal.
 
@@ -226,11 +222,11 @@ picoCTF{549698}
 
 ## Concepts learnt:
 
-- **GDB Usage**: How to use GNU Debugger to analyze binaries
-- **x86_64 Assembly**: Understanding basic assembly instructions and registers
-- **Disassembly**: Converting machine code back to readable assembly language
-- **Register Analysis**: Identifying values stored in CPU registers
-- **Hexadecimal to Decimal Conversion**: Converting between number bases
+GDB Usage: How to use GNU Debugger to analyze binaries
+x86_64 Assembly: Understanding basic assembly instructions and registers
+Disassembly: Converting machine code back to readable assembly language
+Register Analysis: Identifying values stored in CPU registers
+Hexadecimal to Decimal Conversion: Converting between number bases
 
 ## Notes:
 
@@ -242,7 +238,7 @@ picoCTF{549698}
 
 ## Resources:
 
-- [GDB Quick Reference](https://users.ece.utexas.edu/~adnan/gdb-refcard.pdf)
-- [x86_64 Assembly Guide](http://cs.lmu.edu/~ray/notes/x86assembly/)
-- [Number Base Converter](https://www.rapidtables.com/convert/number/hex-to-decimal.html)
+  https://users.ece.utexas.edu/~adnan/gdb-refcard.pdf
+  http://cs.lmu.edu/~ray/notes/x86assembly/
+  https://www.rapidtables.com/convert/number/hex-to-decimal.html
   
