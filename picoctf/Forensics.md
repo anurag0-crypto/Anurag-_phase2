@@ -155,7 +155,7 @@ Created fixed.bmp
 
 ### Step 5: View the fixed image
 After fixing the BMP header, the image displayed properly and revealed the flag.
-
+![](assets/tunn3l_v1s10n_width_fixed.bmp)
 
 ## Flag:
 ```
@@ -178,3 +178,58 @@ picoCTF{qu1t3_a_v13w_2020}
 - BMP File Format Specification
 - Python Bytes Documentation
 
+# m00nwalk
+
+> Decode this [message](https://jupiter.challenges.picoctf.net/static/d6fcea5e3c6433680ea4f914e24fab61/message.wav) from the moon.
+
+## Solution:
+
+The challenge provides an audio file that contains a hidden message encoded using Slow Scan Television (SSTV) technology. The hint about moon landing image transmission pointed toward SSTV, which was historically used by NASA to transmit images from space missions.
+
+SSTV works by encoding visual information into audio signals, where different frequencies represent different brightness levels that can be decoded back into images. This technology was specifically used in Apollo missions to transmit images from the moon back to Earth.
+
+I used two different methods to decode the SSTV signal:
+
+ Using QSSTV Application
+- Set up a virtual audio sink to route the audio playback to the SSTV decoder
+- Configured QSSTV to receive from the virtual audio source
+- Played the WAV file while QSSTV was listening
+- The application gradually decoded the image in real-time as the audio played
+
+![SSTV Decoded Image](assets/sstv.png)
+
+Using Python SSTV Decoder
+- Used the `sstv` Python package from GitHub (https://github.com/colaclanth/sstv)
+- Ran the command: `sstv -d message.wav -o result.png`
+- The tool automatically processed the audio file and output the decoded image
+
+Both methods successfully revealed the same flag embedded in the SSTV transmission. The decoded image clearly shows the flag text displayed against a space background.
+
+## Flag:
+
+```
+picoCTF{beep_boop_im_in_space}
+```
+
+## Concepts learnt:
+
+- Slow Scan Television (SSTV) technology and principles
+- Audio-to-image encoding methods
+- Historical space communication protocols
+- Signal processing and decoding techniques
+- Virtual audio device configuration
+
+## Notes:
+
+- SSTV was actually used in Apollo missions to transmit images from the moon
+- Different SSTV modes exist with various resolution and timing characteristics
+- The virtual audio setup was necessary for real-time decoding with QSSTV
+- The Python method provided a quicker, automated solution without real-time processing
+- SSTV remains popular in amateur radio communities
+
+## Resources:
+
+http://users.telenet.be/on4qz/
+https://github.com/colaclanth/sstv
+https://en.wikipedia.org/wiki/Slow-scan_television
+https://askubuntu.com/questions/1338747/virtual-audio-sink-virtual-audio-cable-on-ubuntu
